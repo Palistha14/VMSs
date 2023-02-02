@@ -23,8 +23,7 @@ public class Main {
         m.menu();
 
     }
-    public void menu()
-    {
+    public void menu() throws SQLException {
         menuBase = new MenuBase();
         repo = new Repository();
         System.out.println("Press as per following");
@@ -82,8 +81,7 @@ public class Main {
                 break;
         }
     }
-    public void call()
-    {
+    public void call() throws SQLException {
         Scanner inp = new Scanner(System.in);
         System.out.println("Do you want to continue? \t Enter yes or no");
         String co = inp.nextLine();

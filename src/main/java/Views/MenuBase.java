@@ -8,20 +8,15 @@ import java.util.Scanner;
 public class MenuBase {
     Repository repo;
     Scanner in;
-    public void create(){
+    public void create() throws SQLException {
         repo = new Repository();
         in = new Scanner(System.in);
-        System.out.println("Please enter the name of person to book");
-        String name =  in.nextLine();
-        System.out.println("Please enter description for booking");
-        String description =  in.nextLine();
-        System.out.println("Please enter your phone number");
-        String phone =  in.nextLine();
-        System.out.println("Please enter date of booking");
+        System.out.println("At first, please enter date of booking");
         String date =  in.nextLine();
         System.out.println("Please enter hall number");
         int id = Integer.parseInt(in.nextLine());
-        repo.bookVenue(name, description, phone, date, id);
+        System.out.println("Checking the availability!!!");
+        repo.bookVenue(date, id);
     }
     public void delete() throws SQLException {
         repo = new Repository();

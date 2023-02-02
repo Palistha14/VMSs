@@ -1,13 +1,20 @@
 package Repo;
 
+import Views.MenuBase;
+import org.example.Main;
+
 import java.sql.*;
+import java.util.Scanner;
 
 public class Repository {
     public Connection con;
     public PreparedStatement p;
+    public Statement stmt;
     public ResultSet rs;
     public Statement st;
     public int total;
+    public Main m;
+    Scanner in;
 
     public void connection() {
         con = null;
@@ -43,29 +50,69 @@ public class Repository {
         }
         con.close();
     }
-    public void bookVenue(String name, String description, String phone, String date, int id) {
+    public void bookVenue(String date, int id) throws SQLException {
         connection();
-        String query1 = "INSERT INTO venue(name, description, phone, date, area_id, isDeleted) VALUES ('" + name + "', '" + description + "', '" + phone + "', '" + date + "', " + id + ", 0)";
-        String count = "SELECT count FROM area WHERE id = " + id;
-        try {
-            st = con.createStatement();
-            st.executeUpdate(query1);
-            p = con.prepareStatement(count);
-            rs = p.executeQuery();
-            while (rs.next()) {
-                total = rs.getInt("count");
-                total++;
+        String check = "SELECT id FROM venue WHERE date ='"+ date +"' AND area_id =" +id+" AND isDeleted= 0";
+        m = new Main();
+        stmt = con.createStatement();
+        rs = stmt.executeQuery(check);
+        if(rs.next() == false)
+        {
+            try {
+                in = new Scanner(System.in);
+                System.out.println("Available!!!");
+                System.out.println("Please enter the name of person to book");
+                String name =  in.nextLine();
+                System.out.println("Please enter description for booking");
+                String description =  in.nextLine();
+                System.out.println("Please enter your phone number");
+                String phone =  in.nextLine();
+                System.out.println("Please enter your number of people");
+                int people = Integer.parseInt(in.nextLine());
+                System.out.println("Please enter per plate cost");
+                int per= Integer.parseInt(in.nextLine());
+                System.out.println("Please enter discount amount");
+                int discount = Integer.parseInt(in.nextLine());
+                int gross = (people * per);
+                int total = gross - discount;
+                String query1 = "INSERT INTO venue(name, description, phone, date, area_id, isDeleted, total_cost, per_plate, discount, " +
+                        "people) VALUES ('" + name + "', '" + description + "', '" + phone + "" +
+                        "', '" + date + "', " + id + ", 0,"+total+", "+per+", "+discount+", "+people+" )";
+                String count = "SELECT count FROM area WHERE id = " + id;
+                st = con.createStatement();
+                st.executeUpdate(query1);
+                p = con.prepareStatement(count);
+                rs = p.executeQuery();
+                while (rs.next()) {
+                    total = rs.getInt("count");
+                    total++;
+                }
+                String countUpdate = "UPDATE area SET count = (" + total + ")WHERE area.id = " + id;
+                System.out.println("Here is the booking detail");
+                System.out.println("Name: "+name);
+                System.out.println("Description: "+description);
+                System.out.println("Phone number: "+phone);
+                System.out.println("Hall np: "+id);
+                System.out.println("Total cost: "+total);
+                System.out.println("Per_Plate: "+per);
+                System.out.println("Total People: "+people);
+                System.out.println("Total Discount: "+discount);
+                st.executeUpdate(countUpdate);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
-            String countUpdate = "UPDATE area SET count = (" + total + ")WHERE area.id = " + id;
-            st.executeUpdate(countUpdate);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                con.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
-        try {
-            con.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        else
+        {
+            System.out.println("Hall "+ id+ " already booked for this "+ date + " date");
+            m.call();
         }
+
     }
     public void updateVenue(String name, String description, String phone, String date, int id, int ids) {
         connection();
