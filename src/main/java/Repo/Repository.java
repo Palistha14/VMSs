@@ -37,16 +37,14 @@ public class Repository {
             throw new RuntimeException(e);
         }
         rs = p.executeQuery();
-        System.out.println("Name\t\tDescription\t\tSize\t\tPrice");
+        System.out.println("Name\t\tDescription\t\tSize");
         while (rs.next()) {
 
-//            int id = rs.getInt("id");
             String name = rs.getString("name");
             int size = rs.getInt("size");
-            int price = rs.getInt("Price");
             String description = rs.getString("Description");
             System.out.println(name
-                    + "\t\t" + description + "\t" + size + " people\t"+price);
+                    + "\t\t" + description + "\t" + size + " people\t");
         }
         con.close();
     }
@@ -71,13 +69,15 @@ public class Repository {
                 int people = Integer.parseInt(in.nextLine());
                 System.out.println("Please enter per plate cost");
                 int per= Integer.parseInt(in.nextLine());
+                int gross = (people * per);
+                System.out.println("Total cost without discount is Rs. "+gross);
                 System.out.println("Please enter discount amount");
                 int discount = Integer.parseInt(in.nextLine());
-                int gross = (people * per);
-                int total = gross - discount;
+                int totals = gross - discount;
+                System.out.println("Total cost after discount is Rs. "+total);
                 String query1 = "INSERT INTO venue(name, description, phone, date, area_id, isDeleted, total_cost, per_plate, discount, " +
                         "people) VALUES ('" + name + "', '" + description + "', '" + phone + "" +
-                        "', '" + date + "', " + id + ", 0,"+total+", "+per+", "+discount+", "+people+" )";
+                        "', '" + date + "', " + id + ", 0,"+totals+", "+per+", "+discount+", "+people+" )";
                 String count = "SELECT count FROM area WHERE id = " + id;
                 st = con.createStatement();
                 st.executeUpdate(query1);
@@ -92,11 +92,11 @@ public class Repository {
                 System.out.println("Name: "+name);
                 System.out.println("Description: "+description);
                 System.out.println("Phone number: "+phone);
-                System.out.println("Hall np: "+id);
-                System.out.println("Total cost: "+total);
+                System.out.println("Hall no: "+id);
                 System.out.println("Per_Plate: "+per);
                 System.out.println("Total People: "+people);
                 System.out.println("Total Discount: "+discount);
+                System.out.println("Total cost after discount: "+totals);
                 st.executeUpdate(countUpdate);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
